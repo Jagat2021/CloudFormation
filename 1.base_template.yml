@@ -1,0 +1,21 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Baseline template for EC2. This creates a custom VPC. Parent subnet is 192.168.1.0
+#Metadata:
+#Parameters:
+#Mappings:
+#Conditions:
+
+### RESOURCE CREATION ###
+Resources:
+  devVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "192.168.1.0/24"
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: Environment
+          Value: Dev
+        - Key: Name
+          Value: devVPC
+#Outputs:
