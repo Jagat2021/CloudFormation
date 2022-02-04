@@ -1,0 +1,132 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Add route table association to the subnets in base template
+#Metadata:
+#Parameters:
+#Mappings:
+#Conditions:
+
+### RESOURCE CREATION ###
+Resources:
+  devVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "192.168.1.0/24"
+      EnableDnsSupport: "true"
+      EnableDnsHostnames: "true"
+      Tags:
+        - Key: Environment
+          Value: Dev
+        - Key: Name
+          Value: devVPC
+    # ADD 4 dev, uat, prod, DR SUBNETS
+  PublicSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: devVPC
+      CidrBlock: 192.168.1.0/26
+      MapPublicIpOnLaunch: "true"
+      AvailabilityZone: "us-east-1a"
+      Tags:
+        - Key: Name
+          Value: Public_Subnet
+  WEBSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: devVPC
+      CidrBlock: 192.168.1.64/26
+      AvailabilityZone: "us-east-1b"
+      Tags:
+        - Key: Name
+          Value: WebServer_Subnet
+  APPSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: devVPC
+      CidrBlock: 192.168.1.128/26
+      AvailabilityZone: "us-east-1c"
+      Tags:
+        - Key: Name
+          Value: AppServer_Subnet
+  DBSubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId:
+        Ref: devVPC
+      CidrBlock: 192.168.1.192/26
+      AvailabilityZone: "us-east-1d"
+      Tags:
+        - Key: Name
+          Value: dbServer_Subnet
+  ## ADD Route Table
+  PubRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: devVPC
+      Tags:
+        - Key: Name
+          Value: Public-RT
+  WebserverRT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: devVPC
+      Tags:
+        - Key: Name
+          Value: Webserver-RT
+  AppserverRT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: devVPC
+      Tags:
+        - Key: Name
+          Value: Appserver-RT
+  DBserverRT:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId:
+        Ref: devVPC
+      Tags:
+        - Key: Name
+          Value: DBserver-RT
+  # Route Table Association
+  PublicSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref PublicSubnet
+      RouteTableId: !Ref PubRouteTable
+
+  WebSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref WEBSubnet
+      RouteTableId: !Ref WebserverRT
+
+  AppSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref APPSubnet
+      RouteTableId: !Ref AppserverRT
+
+  DBSubnetRouteTableAssociation:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      SubnetId: !Ref DBSubnet
+      RouteTableId: !Ref DBserverRT
+  #Add a Internet GW to devVPC
+  myInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MyIGW
+  AttachInternetGateway:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      VpcId: !Ref devVPC
+      InternetGatewayId: !Ref myInternetGateway
+#Outputs:

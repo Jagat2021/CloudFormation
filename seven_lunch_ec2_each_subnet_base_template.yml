@@ -1,0 +1,51 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Create EC2 instances in each subnet.
+Metadata:
+  Author: !Ref Authorname
+# PARAMETERS
+Parameters:
+  AuthornameParameter:
+    Description: "Name of the CF Template owner/author"
+    Type: String
+  InstanceTypeParameter:
+    Description: "Select the instance family and type"
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.nano
+      - t2.micro
+      - t2.small
+  #AvailabilityZoneParameter:
+  #Description: "Select the AZ for the instance"
+  #Type: List<AWS::EC2::AvailabilityZone::Name>
+  AMIParameter:
+    Description: "Select AMI - 1. RHEL8 - 2.Ubuntu - 3.Windows2019"
+    Type: String
+    AllowedValues:
+      - ami-0b0af3577fe5e3532
+      - ami-04505e74c0741db8d
+      - ami-0d43d465e2051057f
+  SubnetParameter:
+    Description: "Select the relevant subnet"
+    Type: List<AWS::EC2::Subnet::Id>
+  KeyPairParameter:
+    Description: Select EC2 Key Pair
+    Type: "AWS::EC2::KeyPair::KeyName"
+
+#Mappings:
+#Conditions:
+
+### RESOURCE CREATION ###
+Resources:
+  # Create Instances in each subnet/AZ
+  PublicInstances:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref AMIParameter
+      InstanceType: !Ref InstanceTypeParameter
+      SubnetId: !Ref SubnetParameter
+      KeyName: !Ref KeyPairParameter
+      SecurityGroupIds:
+        Fn::ImportValue: !Sub devstack-publicSG
+#Outputs:
+
