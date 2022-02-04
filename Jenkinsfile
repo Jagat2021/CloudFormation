@@ -15,7 +15,7 @@ pipeline{
             }
             post {
                 success {
-                 archiveArtifacts artifacts: 'Base_Templates\*.yml', followSymlinks: false
+                 archiveArtifacts artifacts: 'Base_Templates/*.yml', followSymlinks: false
                 }
             }
 
