@@ -11,14 +11,13 @@ pipeline{
         }
         stage("CF-Validate"){
             steps{
-                sh 'aws cloudformation validate-template --template-body file://$WORKSPACE/one_base_template.yml'
+                sh 'aws cloudformation validate-template --template-body file://$WORKSPACE/Base_Templates/one_base_template.yml'
             }
             post {
                 success {
                  archiveArtifacts artifacts: '*.yml', followSymlinks: false
                 }
             }
-
 
         }
         stage("CF-CreateStack"){
