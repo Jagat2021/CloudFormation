@@ -29,7 +29,7 @@ pipeline{
         stage("Copy to S3"){
             steps{
                 git branch: 'main', credentialsId: '33e25b3f-78dc-4097-bc7d-76045b9fe7e3', url: 'https://github.com/Jagat2021/CloudFormation.git'
-                sh 'aws s3 cp one_base_template.yml s3://testbucket-jagat/one_base_template.yml'
+                sh 'aws s3 cp Base_Templates/one_base_template.yml s3://testbucket-jagat/one_base_template.yml'
             }
            
 
