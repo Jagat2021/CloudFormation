@@ -22,7 +22,7 @@ pipeline{
         }
         stage("CF-CreateStack"){
             steps{
-                sh 'aws cloudformation create-stack --stack-name myteststack --template-body file://$WORKSPACE/one_base_template.yml'
+                sh 'aws cloudformation create-stack --stack-name myteststack --template-body file://$WORKSPACE/Base_Templates/one_base_template.yml'
             }
 
         }
